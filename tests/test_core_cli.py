@@ -15,6 +15,7 @@ def test_representative_sample_has_expected_result():
     assert report["version"] == 1
     assert report["project"] == PROJECT
     assert any(item["kind"] == "duplicate" for item in report["collisions"])
+    assert all(item["scope"] in {"within", "cross"} for item in report["collisions"])
     assert f'"project": "{PROJECT}"' in render_json(report)
     assert PROJECT.replace("-", " ").title() in render_markdown(report)
 
@@ -22,6 +23,23 @@ def test_representative_sample_has_expected_result():
 def test_missing_required_input_is_rejected():
     with pytest.raises(ValueError):
         analyze({})
+
+
+def test_threshold_stopwords_and_comparison_scope():
+    data = {
+        "manuscripts": [
+            {"name": "One", "titles": ["The Long Road", "The Final Road"]},
+            {"name": "Two", "titles": ["A Long Road"]},
+        ],
+        "ignore_words": ["the", "a"],
+        "similarity_threshold": 0.6,
+        "comparison_scope": "cross",
+    }
+    report = analyze(data)
+    assert report["collisions"][0]["shared_tokens"] == ["long", "road"]
+    assert all(item["scope"] == "cross" for item in report["collisions"])
+    with pytest.raises(ValueError, match="comparison_scope"):
+        analyze({**data, "comparison_scope": "nearby"})
 
 
 def test_cli_json_and_output_safety(tmp_path, capsys):
