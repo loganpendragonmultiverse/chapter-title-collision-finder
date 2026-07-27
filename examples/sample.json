@@ -1,0 +1,17 @@
+{
+    "manuscripts":  [
+                        {
+                            "titles":  [
+                                           "The Long Road",
+                                           "Long Road Home"
+                                       ],
+                            "name":  "Book One"
+                        },
+                        {
+                            "titles":  [
+                                           "the long road"
+                                       ],
+                            "name":  "Book Two"
+                        }
+                    ]
+}
