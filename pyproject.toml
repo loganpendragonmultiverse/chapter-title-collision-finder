@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "chapter-title-collision-finder"
-version = "1.0.0"
+version = "1.1.0"
 description = "Find duplicate and confusingly similar chapter titles within or across manuscripts."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -35,4 +35,3 @@ omit = ["src/*/__main__.py"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--cov=chapter_title_collision_finder --cov-branch --cov-report=term-missing --cov-fail-under=90"
-

@@ -12,7 +12,7 @@ chapter-title-collisions examples/sample.json
 chapter-title-collisions examples/sample.json --format json --output report.json
 ```
 
-The example documents the complete v1 input shape. Markdown is intended for immediate review; JSON preserves structured evidence for scripts and later comparison. An existing output file is never overwritten.
+The example documents the complete input shape. Version 1.1 supports `similarity_threshold`, `ignore_words`, and `comparison_scope` (`all`, `within`, or `cross`) and reports shared-token evidence for each candidate. Markdown is intended for immediate review; JSON preserves structured evidence for scripts and later comparison. An existing output file is never overwritten.
 
 ## Privacy and platforms
 
