@@ -23,14 +23,31 @@ def _title_collisions(data: dict[str, Any]) -> dict[str, Any]:
     if scope not in {"all", "within", "cross"}:
         raise ValueError("comparison_scope must be all, within, or cross")
     ignored = {str(word).casefold() for word in data.get("ignore_words", [])}
-    entries = [
-        {"manuscript": manuscript.get("name", "Untitled"), "chapter": number, "title": str(title)}
-        for manuscript in _require(data, "manuscripts")
-        for number, title in enumerate(manuscript.get("titles", []), 1)
-    ]
+    manuscripts = _require(data, "manuscripts")
+    use_ids = any("id" in manuscript for manuscript in manuscripts)
+    if use_ids:
+        ids = [manuscript.get("id") for manuscript in manuscripts]
+        if any(not isinstance(identity, str) or not identity.strip() for identity in ids):
+            raise ValueError(
+                "every manuscript must have a nonempty string id when IDs are supplied"
+            )
+        if len(set(ids)) != len(ids):
+            raise ValueError("manuscript IDs must be unique")
+    entries = []
+    for manuscript in manuscripts:
+        for number, title in enumerate(manuscript.get("titles", []), 1):
+            entry = {
+                "manuscript": manuscript.get("name", "Untitled"),
+                "chapter": number,
+                "title": str(title),
+            }
+            if use_ids:
+                entry["manuscript_id"] = manuscript["id"]
+            entries.append(entry)
     collisions = []
     for left, right in combinations(entries, 2):
-        same_manuscript = left["manuscript"] == right["manuscript"]
+        identity_key = "manuscript_id" if use_ids else "manuscript"
+        same_manuscript = left[identity_key] == right[identity_key]
         if (scope == "within" and not same_manuscript) or (scope == "cross" and same_manuscript):
             continue
         left_tokens = set(re.findall("[a-z0-9]+", left["title"].casefold())) - ignored
