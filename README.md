@@ -38,3 +38,13 @@ python -m build
 The project is feature-complete for its documented v1 scope. Maintenance focuses on correctness, security, compatibility, and well-supported input improvements.
 
 Part of the [Logan Pendragon Forge open-source collection](https://www.loganpendragonforge.com/open-source/). Licensed under the [MIT License](LICENSE).
+
+## Version 1.2.0: manuscript identity
+
+Give every manuscript a unique, nonempty string `id` to compare books independently of their display `name`. For example, `{"id":"draft-a","name":"Untitled","titles":["Arrival"]}` and `{"id":"draft-b","name":"Untitled","titles":["Arrival"]}` produce a cross-manuscript duplicate. When any ID is supplied, all manuscripts must have IDs, and duplicates are rejected even for empty title lists. Findings retain the display name and add `manuscript_id`. Without IDs, the legacy name-based comparison and output remain unchanged. Thresholds still use the unrounded Jaccard score; exact title duplicates always match.
+
+Try the synthetic example:
+
+```bash
+chapter-title-collisions examples/feature.json --format json
+```
