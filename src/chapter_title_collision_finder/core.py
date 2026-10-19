@@ -16,14 +16,30 @@ def _require(data: dict[str, Any], key: str) -> Any:
 
 
 def _title_collisions(data: dict[str, Any]) -> dict[str, Any]:
-    threshold = float(data.get("similarity_threshold", 0.6))
-    if not 0 <= threshold <= 1:
+    raw_threshold = data.get("similarity_threshold", 0.6)
+    if isinstance(raw_threshold, bool) or not isinstance(raw_threshold, (int, float)):
+        raise TypeError("similarity_threshold must be a number between 0 and 1")
+    if not 0 <= raw_threshold <= 1:
         raise ValueError("similarity_threshold must be between 0 and 1")
+    threshold = float(raw_threshold)
     scope = str(data.get("comparison_scope", "all"))
     if scope not in {"all", "within", "cross"}:
         raise ValueError("comparison_scope must be all, within, or cross")
-    ignored = {str(word).casefold() for word in data.get("ignore_words", [])}
+    ignore_words = data.get("ignore_words", [])
+    if not isinstance(ignore_words, list) or any(
+        not isinstance(word, str) for word in ignore_words
+    ):
+        raise ValueError("ignore_words must be an array of strings")
+    ignored = {word.casefold() for word in ignore_words}
     manuscripts = _require(data, "manuscripts")
+    if not isinstance(manuscripts, list) or any(not isinstance(m, dict) for m in manuscripts):
+        raise ValueError("manuscripts must be an array of objects")
+    for manuscript in manuscripts:
+        if "name" in manuscript and not isinstance(manuscript["name"], str):
+            raise ValueError("manuscript name must be a string")
+        titles = manuscript.get("titles", [])
+        if not isinstance(titles, list) or any(not isinstance(title, str) for title in titles):
+            raise ValueError("manuscript titles must be an array of strings")
     use_ids = any("id" in manuscript for manuscript in manuscripts)
     if use_ids:
         ids = [manuscript.get("id") for manuscript in manuscripts]
@@ -74,6 +90,8 @@ def _title_collisions(data: dict[str, Any]) -> dict[str, Any]:
 
 
 def analyze(data: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(data, dict):
+        raise TypeError("input must be a JSON object")
     return {"version": 1, "project": PROJECT, **_title_collisions(data)}
 
 

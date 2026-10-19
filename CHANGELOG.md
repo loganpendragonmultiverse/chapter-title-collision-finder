@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1 - 2026-10-19
+
+- Validate manuscript/title arrays, ignored-word lists and numeric thresholds while preserving manuscript identity and lexical matching.
+- Create report files exclusively, refuse symlink destinations and return a clean error for closed stdout pipes.
+- Include release handoff documents and their license with the installed package.
+
 ## 1.2.0 - 2026-10-16
 
 - Added manuscript identity.

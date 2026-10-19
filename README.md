@@ -48,3 +48,11 @@ Try the synthetic example:
 ```bash
 chapter-title-collisions examples/feature.json --format json
 ```
+
+## Validation and report files — 1.2.1
+
+Input must be a JSON object. `manuscripts` is a nonempty array of objects; each optional `titles` value is an array of strings, and each supplied `name` is a string. Empty title arrays are allowed. `ignore_words` is an array of strings. `similarity_threshold` is a finite JSON number between 0 and 1; booleans and numeric strings are rejected.
+
+Reports must use new destinations: existing files, directories and symlinks are refused. Invalid inputs and output errors return status 2; success returns 0. Closed stdout pipes are handled inside the command. A failed new report write may leave a partial file; power-loss transactions are not promised. Inputs remain read-only.
+
+Install a downloaded release wheel with `python -m pip install ./PACKAGE.whl`, using the actual filename. The source distribution can also be installed with pip. The installed package includes README, changelog, development/testing instructions, license and examples under `share/doc/chapter-title-collision-finder/` in the installation prefix. The repository checkout is convenient for running the example paths as written.
